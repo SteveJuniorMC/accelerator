@@ -1,6 +1,5 @@
 package com.accelerator.app.ui
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -38,16 +37,16 @@ fun AccelerationScreen(
         )
 
         when (state.phase) {
-            RunPhase.IDLE -> IdleView(onStart)
-            RunPhase.WAITING -> WaitingView(onStop)
-            RunPhase.RUNNING -> RunningView(state, onStop)
-            RunPhase.FINISHED -> FinishedView(state, onReset)
+            RunPhase.IDLE -> IdleContent(onStart)
+            RunPhase.WAITING -> WaitingContent(onStop)
+            RunPhase.RUNNING -> RunningContent(state, onStop)
+            RunPhase.FINISHED -> FinishedContent(state, onReset)
         }
     }
 }
 
 @Composable
-private fun IdleView(onStart: () -> Unit) {
+private fun ColumnScope.IdleContent(onStart: () -> Unit) {
     Spacer(Modifier.weight(1f))
 
     Text(
@@ -77,7 +76,7 @@ private fun IdleView(onStart: () -> Unit) {
 }
 
 @Composable
-private fun WaitingView(onStop: () -> Unit) {
+private fun ColumnScope.WaitingContent(onStop: () -> Unit) {
     Spacer(Modifier.weight(1f))
 
     Text(
@@ -112,10 +111,9 @@ private fun WaitingView(onStop: () -> Unit) {
 }
 
 @Composable
-private fun RunningView(state: AccelState, onStop: () -> Unit) {
+private fun ColumnScope.RunningContent(state: AccelState, onStop: () -> Unit) {
     Spacer(Modifier.height(16.dp))
 
-    // Big speed display
     Text(
         text = "%.0f".format(state.currentSpeedMph),
         fontSize = 96.sp,
@@ -133,7 +131,6 @@ private fun RunningView(state: AccelState, onStop: () -> Unit) {
 
     Spacer(Modifier.height(24.dp))
 
-    // Timer
     Text(
         text = "%.2f".format(state.elapsedSeconds),
         fontSize = 48.sp,
@@ -149,7 +146,6 @@ private fun RunningView(state: AccelState, onStop: () -> Unit) {
 
     Spacer(Modifier.height(24.dp))
 
-    // Live metrics
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
@@ -160,7 +156,6 @@ private fun RunningView(state: AccelState, onStop: () -> Unit) {
 
     Spacer(Modifier.height(16.dp))
 
-    // Milestones as they're hit
     if (state.result.zeroTo60Mph != null) {
         MilestoneRow("0-60 mph", "%.2f s".format(state.result.zeroTo60Mph))
     }
@@ -190,7 +185,7 @@ private fun RunningView(state: AccelState, onStop: () -> Unit) {
 }
 
 @Composable
-private fun FinishedView(state: AccelState, onReset: () -> Unit) {
+private fun ColumnScope.FinishedContent(state: AccelState, onReset: () -> Unit) {
     Spacer(Modifier.height(8.dp))
 
     Text(
